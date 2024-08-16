@@ -5,7 +5,7 @@ import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author Walt Nara
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -113,7 +113,44 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
-
+        this.board.setViewingPerspective(side);
+        int size = board.size();
+        int[][] merged = new int[size][size];
+        for (int i=0;i<size;i++){
+            for (int j=0;j<size;j++){
+                merged[i][j]=0;
+            }
+        }
+        for (int col=0;col<size;col++){
+            for (int row=size-2;row>=0;row--){
+                if (this.board.tile(col,row)!=null){
+                    Tile ti=board.tile(col,row);
+                    for (int r=row+1;r<size;r++){
+                        Tile ti1=this.board.tile(col,r);
+                        if (ti1!=null){
+                            if (ti1.value()==ti.value()&&merged[col][r]==0){
+                                this.score+=2*ti1.value();
+                                this.board.move(col,r,ti);//causes chain reaction problem.a record of whether merged happended here needed?
+                                merged[col][r]=1;
+                                changed=true;
+                                break;
+                            }
+                            else{
+                                this.board.move(col,r-1,ti);//causes false board-changed?
+                                changed=(r-1!=row);
+                                break;
+                            }
+                        }
+                        if (r==size-1){
+                            this.board.move(col,size-1,ti);
+                            changed=true;
+                        }
+                    }
+                    
+                }
+            }
+        }
+        this.board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
@@ -138,6 +175,14 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        int size = b.size();
+        for (int i=0;i<size;i++){
+            for (int j=0;j<size;j++){
+                if (b.tile(i,j)==null){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -148,6 +193,17 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        int size = b.size();
+        for (int i=0;i<size;i++){
+            for (int j=0;j<size;j++){
+                if (b.tile(i,j)!=null){
+                    if (b.tile(i,j).value()==MAX_PIECE){
+                        return true;
+                    }
+                }
+                
+            }
+        }
         return false;
     }
 
@@ -159,7 +215,29 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
-        return false;
+    
+        if (emptySpaceExists(b)){
+            return true;
+        }
+        else {
+            int size = b.size();
+            for (int i=0;i<size;i++){
+                for (int j=0;j<size;j++){
+                    if (i<size-1){
+                        if (b.tile(i,j).value()==b.tile(i+1,j).value()){
+                            return true;
+                        }
+                    }
+                    if (j<size-1){
+                        if (b.tile(i,j).value()==b.tile(i,j+1).value()){
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        
     }
 
 
