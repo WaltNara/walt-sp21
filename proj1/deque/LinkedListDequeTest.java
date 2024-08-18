@@ -2,6 +2,7 @@ package deque;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import java.util.Iterator;
 
 
 /** Performs some basic linked list tests. */
@@ -231,4 +232,57 @@ public class LinkedListDequeTest {
 
         assertFalse(lld1==lld2);
     }
+
+    @Test
+    public void iteratorTest() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+        lld1.addFirst(3);
+        lld1.addFirst(2);
+        lld1.addFirst(1);
+        lld1.addLast(4);
+        lld1.addLast(5);
+        lld1.addLast(6);
+
+        Iterator<Integer> iter = lld1.iterator();
+        int i = 1;
+        while (iter.hasNext()) {
+            assertEquals(i, (int) iter.next());
+            i++;
+        }
+    }
+
+    @Test
+    public void equalsTest2() {
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+        LinkedListDeque<Integer> lld2 = new LinkedListDeque<Integer>();
+
+        assertTrue(lld1.equals(lld2));
+
+        lld1.addFirst(1);
+        assertFalse(lld1.equals(lld2));
+
+        lld2.addFirst(1);
+        assertTrue(lld1.equals(lld2));
+
+        lld1.addLast(2);
+        assertFalse(lld1.equals(lld2));
+
+        lld2.addLast(2);
+        assertTrue(lld1.equals(lld2));
+
+        lld1.removeFirst();
+        assertFalse(lld1.equals(lld2));
+
+        lld2.removeFirst();
+        assertTrue(lld1.equals(lld2));
+
+        lld1.removeLast();
+        assertFalse(lld1.equals(lld2));
+
+        lld2.removeLast();
+        assertTrue(lld1.equals(lld2));
+
+        assertFalse(lld1==lld2);
+    }
+        
 }
