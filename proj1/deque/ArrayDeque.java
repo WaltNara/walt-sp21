@@ -67,7 +67,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         _size++;
     }
 
-    public void resize(int capacity) {
+    private void resize(int capacity) {
         T[] a = (T[]) new Object[capacity];
         for (int i = 0; i < _size; i++) {
             a[i] = items[movePointer(first, i)];
